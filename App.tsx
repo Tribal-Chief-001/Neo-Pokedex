@@ -42,15 +42,20 @@ const App: React.FC = () => {
                 if (!response.ok) {
                     throw new Error('Pokedex data not found. If in development, please run `npm run fetch-data`.');
                 }
-                let data: Pokemon[] = await response.json();
+                const data: any[] = await response.json();
+
+                // Check for the placeholder/error object in pokedex.json
+                if (Array.isArray(data) && data.length > 0 && data[0].error) {
+                    throw new Error(data[0].error);
+                }
 
                 // Enrich data with BST
-                data = data.map(p => ({
+                const enrichedData: Pokemon[] = data.map(p => ({
                     ...p,
-                    bst: p.stats.reduce((sum, stat) => sum + stat.value, 0)
+                    bst: p.stats?.reduce((sum, stat) => sum + stat.value, 0) ?? 0,
                 }));
                 
-                setAllPokemon(data);
+                setAllPokemon(enrichedData);
             } catch (err) {
                 const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
                 setError(errorMessage);
