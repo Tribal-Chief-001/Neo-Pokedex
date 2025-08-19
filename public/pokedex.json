@@ -1,0 +1,6 @@
+
+[
+  {
+    "error": "Database not generated. Please run 'npm run fetch-data' in your terminal to build the complete Pokedex."
+  }
+]
